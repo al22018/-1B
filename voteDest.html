@@ -1,0 +1,60 @@
+<!--*******************************************************************
+*** File Name : VoteDest.html
+*** Version : V1.0
+*** Designer : 相内 優真
+*** Date : 2024.6.10
+*** Purpose : W6 行き先投票画面を表示する
+***
+*******************************************************************-->
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+
+        <!--外部のCSSファイルを読み込み-->
+        <link rel="stylesheet" href="./pageStyle.css">
+    </head>
+    <body>
+        <p>日程： X月Y日 Z曜日</p>
+        <p>希望の条件を入力してください</p>
+
+        <!--ジャンルのセレクトボックスを追加-->
+        <div>
+            ジャンル
+            <select name="genre">
+                <option value="ジャンル１">ジャンル１</option>
+                <option value="ジャンル２">ジャンル２</option>
+                <option value="ジャンル３">ジャンル３</option>
+            </select>
+        </div>
+
+        <br>
+
+        <!--予算の入力欄を追加-->
+        <div>
+            予算
+            <input type="text" name="budget1">
+            円 ～ 
+            <input type="text" name="budget2">
+            円
+        </div>
+
+        <br>
+
+        <!--レビュー評価のセレクトボックスを追加-->
+        <div>
+            レビュー評価
+            <select name="review">
+                <option value="3.5">星3.5以上</option>
+                <option value="4.0">星4.0以上</option>
+                <option value="4.5">星4.5以上</option>
+            </select>
+        </div>
+
+        <br>
+
+        <!--投票ボタンの追加-->
+        <button type="submit">投票</button>
+    </body>
+</html>
