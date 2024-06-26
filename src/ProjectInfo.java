@@ -46,7 +46,7 @@ public class ProjectInfo {
     String passWord = "toyosu";
     String url = "jdbc:postgresql:" + server + dataBase;
 
-    // 企画IDから企画情報を取得、projectクラスのフィールドに保存するメソッド
+    // 企画IDから企画情報を取得、projectinfoクラスのフィールドに保存するメソッド
     public ProjectInfo getProjectInfo(int projectID) {
 
         // DB接続
