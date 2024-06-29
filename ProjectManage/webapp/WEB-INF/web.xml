@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app>
+  <servlet>
+    <servlet-name>GetAccessToken</servlet-name>
+    <servlet-class>GetAccessToken</servlet-class>
+  </servlet>
+
+  <servlet>
+    <servlet-name>GetNickName</servlet-name>
+    <servlet-class>GetNickName</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>GetAccessToken</servlet-name>
+    <url-pattern>/servlet/GetAccessToken/</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>GetNickName</servlet-name>
+    <url-pattern>/servlet/GetNickName/</url-pattern>
+  </servlet-mapping>
+</web-app>
