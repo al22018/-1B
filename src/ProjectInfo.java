@@ -30,20 +30,20 @@ import java.sql.Timestamp;
  */
 
 public class ProjectInfo {
-    int projectID;
-    String projectName = "";
-    Timestamp dateTime;
-    String category = "";
-    String destination = "";
-    int managerID;
-    String region = "";
-    String leader = "";// 幹事のユーザネーム
+    public int projectID;
+    public String projectName = "";
+    public Timestamp dateTime;
+    public String category = "";
+    public String destination = "";
+    public int managerID;
+    public String region = "";
+    public String progressstatus = "";
 
     // DB接続のためのアドレスなど
-    String server = "//172.21.40.30:5432/"; // seserverのIPアドレス
-    String dataBase = "firstdb";
-    String user = "shibaura";
-    String passWord = "toyosu";
+    String server = "//172.18.80.1:5432/"; // seserverのIPアドレス
+    String dataBase = "test1";
+    String user = "oops";
+    String passWord = "pass";
     String url = "jdbc:postgresql:" + server + dataBase;
 
     // 企画IDから企画情報を取得、projectinfoクラスのフィールドに保存するメソッド
@@ -60,11 +60,15 @@ public class ProjectInfo {
             // 検索の実施と結果の格納
             String sql = "SELECT * FROM ProjectsTableNinth WHERE ProjectID = " + projectID;
             ResultSet rs = stmt.executeQuery(sql);
-
+            rs.next();
+            ret.projectID = rs.getInt(projectID);
             ret.projectName = rs.getString("Name");
-            ret.destination = rs.getString("Destination");
-            ret.region = rs.getString("Region");
             ret.dateTime = rs.getTimestamp("DateTime");
+            ret.category = rs.getString("Category");
+            ret.destination = rs.getString("Destination");
+            ret.managerID = rs.getInt("ManagerID");
+            ret.region = rs.getString("Region");
+            ret.progressstatus = rs.getString("ProgressStatus");
 
             stmt.close();
             con.close();
@@ -77,12 +81,13 @@ public class ProjectInfo {
         }
     }
 
+  //ProjectInfoクラスのフィールドに格納されたデータをデータベースに登録するメソッド
     public void setProjectInfo() {
         try {
             Class.forName("org.postgresql.Driver");
             Connection con = DriverManager.getConnection(url, user, passWord);
 
-            String sql = "INSERT INTO ProjectsTableNinth VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO ProjectsTableNinth VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement prestmt = con.prepareStatement(sql);
 
             prestmt.setInt(1, projectID);
@@ -92,6 +97,7 @@ public class ProjectInfo {
             prestmt.setString(5, destination);
             prestmt.setInt(6, managerID);
             prestmt.setString(7, region);
+            prestmt.setString(8, progressstatus);
 
             prestmt.executeUpdate();
             prestmt.close();
