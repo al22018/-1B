@@ -37,7 +37,7 @@ public class ProjectInfo {
     public String destination = "";
     public int managerID;
     public String region = "";
-    public String progressstatus = "";
+    public String progressStatus = "";
 
     // DB接続のためのアドレスなど
     String server = "//172.18.80.1:5432/"; // seserverのIPアドレス
@@ -68,7 +68,7 @@ public class ProjectInfo {
             ret.destination = rs.getString("Destination");
             ret.managerID = rs.getInt("ManagerID");
             ret.region = rs.getString("Region");
-            ret.progressstatus = rs.getString("ProgressStatus");
+            ret.progressStatus = rs.getString("ProgressStatus");
 
             stmt.close();
             con.close();
@@ -97,7 +97,7 @@ public class ProjectInfo {
             prestmt.setString(5, destination);
             prestmt.setInt(6, managerID);
             prestmt.setString(7, region);
-            prestmt.setString(8, progressstatus);
+            prestmt.setString(8, progressStatus);
 
             prestmt.executeUpdate();
             prestmt.close();

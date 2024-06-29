@@ -85,12 +85,12 @@ public class UserInfo {
 	}
 	
 	//UserID、更新するフィールド、更新する値を渡すとテーブルを更新するメソッド
-	public void updateUserInfo(int userID, String updatefield, String value) {
+	public void updateUserInfo(int userID, String updateField, String value) {
         try {
             Class.forName("org.postgresql.Driver");
             Connection con = DriverManager.getConnection(url, user, passWord);
 
-            String sql = "UPDATE UsersTableNinth SET " + updatefield + "=? WHERE UserID=" + userID;
+            String sql = "UPDATE UsersTableNinth SET " + updateField + "=? WHERE UserID=" + userID;
             PreparedStatement prestmt = con.prepareStatement(sql);
 
             prestmt.setString(1, value);
@@ -108,21 +108,21 @@ public class UserInfo {
 	//※注意　・引数はSQLのフィールド名を入力してください
 	//　　　　・UserIDもString型で返します
 	//　　　　・knowninfoは個人が特定できる情報にしてください(表示名などは重複可なのでNG)
-	public String getUserInfo(String getinfo, String knowninfo, String knownvalue) {
+	public String getUserInfo(String getInfo, String knownField, String knownValue) {
         try {
             Class.forName("org.postgresql.Driver");
             Connection con = DriverManager.getConnection(url, user, passWord);
 
-            String sql = "SELECT " + getinfo + " FROM UsersTableNinth WHERE " + knowninfo + "='" + knownvalue + "'";
+            String sql = "SELECT " + getInfo + " FROM UsersTableNinth WHERE " + knownField + "='" + knownValue + "'";
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
             
             rs.next();
             String result;
-            if(getinfo.equals("UserID")) {
-            	result = Integer.toString(rs.getInt(getinfo));
+            if(getInfo.equals("UserID")) {
+            	result = Integer.toString(rs.getInt(getInfo));
             }else {
-            	result = rs.getString(getinfo);
+            	result = rs.getString(getInfo);
             }
             
             stmt.close();
