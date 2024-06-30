@@ -1,0 +1,139 @@
+<!--*******************************************************************
+*** File Name : Home.html
+*** Version : V1.0
+*** Designer : 新保　陽己
+*** Date : 2024.6.11
+*** Purpose : W2 ホーム画面を表示する
+***
+*******************************************************************-->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ホーム画面</title>
+    <style>
+        <!--スタイル-->
+        body {
+            font-family: "MS Gothic", sans-serif;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            padding: 20px;
+        }
+        .left-top, .right-top, .left-bottom {
+            margin: 10px;
+        }
+        label, select, input, button {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <!--企画作成部分-->
+    <div class="container">
+        <div class="left-top">
+            <label for="category">カテゴリ:</label>
+            <select id="category" name="category">
+                <option value="飲食店">飲食店</option>
+            </select>
+            
+            <label for="region">地域:</label>
+            <select id="region" name="region">
+                <option value="関東">関東</option>
+            </select>
+            
+            <label for="time-hour">時間帯:</label>
+            <div class="time-select">
+                <select id="time-hour" name="time-hour">
+                    <!-- JavaScript will populate this -->
+                </select>
+                <span>:</span>
+                <select id="time-minute" name="time-minute">
+                    <!-- JavaScript will populate this -->
+                </select>
+                
+            </select>
+            <!--ボタンと関数を紐づけ-->
+            <button id="EventMainInput">企画作成</button>
+        </div>
+
+        <div class="right-top">
+            <!--参加登録部分-->
+            <label for="projectID">企画ID:</label>
+            <input type="text" id="projectID" name="projectID" maxlength="16">
+            <button id="MemberMainInput">参加登録</button>
+        </div>
+
+        <div class="left-bottom">
+            <!--参加中企画についての表示-->
+            <label for="display-category">カテゴリ:</label>
+            <span id="display-category"></span>
+
+            <label for="display-region">地域:</label>
+            <span id="display-region"></span>
+
+            <label for="display-time">時間帯:</label>
+            <span id="display-time"></span>
+
+            <label for="display-eventID">企画ID:</label>
+            <span id="display-eventID"></span>
+
+            <button id="move">移動</button>
+        </div>
+    </div>
+
+    <script>
+        //時間帯についての選択表示
+        // Populate hour and minute dropdowns
+        const hourSelect = document.getElementById('time-hour');
+        const minuteSelect = document.getElementById('time-minute');
+
+        for (let hour = 0; hour < 24; hour++) {
+            const formattedHour = String(hour).padStart(2, '0');
+            const hourOption = document.createElement('option');
+            hourOption.value = formattedHour;
+            hourOption.textContent = formattedHour;
+            hourSelect.appendChild(hourOption);
+        }
+        for (let minute = 0; minute < 60; minute++) {
+            const formattedMinute = String(minute).padStart(2, '0');
+            const minuteOption = document.createElement('option');
+            minuteOption.value = formattedMinute;
+            minuteOption.textContent = formattedMinute;
+            minuteSelect.appendChild(minuteOption);
+        }
+
+
+    
+    </script>
+            <!--呼び出す関数-->
+    <script src="EventMainInput.js"></script>
+    <script src="MemberMainInput.js"></script>
+    <script>
+        //企画作成をクリックで関数呼び出し
+        document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('EventMainInput').addEventListener('click', function() {
+            const category = document.getElementById('category').value;
+            const region = document.getElementById('region').value;
+            const time_hour = document.getElementById('time-hour').value;
+            const time_minute = document.getElementById('time-minute').value;
+            EventMainInput(category, region, time_hour,time_minute);
+        });
+    });
+    </script>
+    <script>
+        //参加登録をクリックで関数呼び出し
+        document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('MemberMainInput').addEventListener('click', function() {
+            const projectID = document.getElementById('projectID').value;
+            MemberMainInput(projectID);
+        });
+    });
+    </script>
+</body>
+</html>
