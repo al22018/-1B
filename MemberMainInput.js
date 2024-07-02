@@ -39,6 +39,8 @@ async function MemberMainInput(projectID) {
         }
 
         const result = await response.json();
+        sessionStorage.setItem('projectID', projectID);
+        window.location.href = 'JoinDisplay.html';
 
         // 正常終了
         return result.success ? 1 : 0;
