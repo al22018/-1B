@@ -19,10 +19,16 @@
  * - Integer: 処理の成否 (0: エラー, それ以外: 正常)
  */
 
-async function EventMainInput(category, region, timeHour, timeMinute) {
-    const url = 'http://localhost:8000'; // 送信先サーバのURL
+async function EventMainInput(managerName,managerID,projectName,category, region, timeHour, timeMinute) {
+    const url = 'http://localhost:8000/api/data'; // 送信先サーバのURL
+    //本来は引数から使う
+    managerName='新保';
+    managerID=1;
     const data = {
         action: 'event',
+        managerName: managerName,
+        managerID: managerID,
+        projectName: projectName,
         category: category,
         region: region,
         timeHour: timeHour,
@@ -43,7 +49,12 @@ async function EventMainInput(category, region, timeHour, timeMinute) {
         }
 
         const result = await response.json();
-        window.location.href = 'JoinDisplay.html';
+        if (result.projectID) {
+            sessionStorage.setItem('projectID', result.projectID);
+            window.location.href = 'JoinDisplay.html';
+        } else {
+            throw new Error('プロジェクトIDが取得できませんでした');
+        }
 
         // 正常終了
         return result.success ? 1 : 0;
