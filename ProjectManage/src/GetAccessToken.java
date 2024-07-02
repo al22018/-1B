@@ -1,14 +1,15 @@
 /*******************************************************************
 *** File Name : GetAccessToken.java
-*** Version : V1.0
+*** Version : V1.1
 *** Designer : 村田 悠真
-*** Date : 2024/06/27
+*** Date : 2024/07/02
 *** Purpose : accessTokenをGetリクエストから受信，nickName登録画面に遷移する
 ***
 *******************************************************************/
 /*
 *** Revision :
 *** V1.0 : 村田悠真, 2024.06.27
+*** V1.1 : 村田悠真, 2024.07.02 doGet
 */
 
 
@@ -36,6 +37,8 @@ public class GetAccessToken extends HttpServlet {
     	// Getリクエストから取得したaccessToken
         String accessToken = request.getParameter("accessToken");
         
+        // From. Changed 村田悠真 2024/07/02
+        try {
         /* ユーザID，email，accessTokenをDBに登録する */
         UserInfoReg.userInfoReg(accessToken);
         
@@ -50,6 +53,15 @@ public class GetAccessToken extends HttpServlet {
         // DBに登録済のニックネーム　未登録の場合は""を想定
         String nickName = selectNickName(userID);
         */
+        }
+        /* DBアクセスが失敗した時の例外処理 */
+        catch (Exception e) {
+
+            // エラー画面のURL
+            String errorUrl = "/ProjectManage/loginError.html";
+            response.sendRedirect(errorUrl);
+        }
+        // To. Changed 村田悠真 2024/07/02
         
 		// 暫定的な処理
         // DBプログラムが完成後，削除
