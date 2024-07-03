@@ -26,7 +26,7 @@ function oauthSignIn() {
   var params = {'client_id': '392540335947-80u8h7nsatafshlr54gkge4suhmaoau8.apps.googleusercontent.com',
                 'redirect_uri': 'http://localhost:8080/ProjectManage/googleAuthRedirect.html',
                 'response_type': 'token',
-                'scope': 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/calendar.events.freebusy',
+                'scope': 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/calendar.events.freebusy https://www.googleapis.com/auth/calendar.calendarlist.readonly',
                 'include_granted_scopes': 'true',
                 'state': 'pass-through value'};
 

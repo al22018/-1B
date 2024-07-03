@@ -10,6 +10,7 @@
 *** Revision :
 *** V1.0 : 村田悠真, 2024.06.27
 *** V1.1 : 村田悠真, 2024.07.02 userInfoReg, getEmailAddress
+*** V1.2 : 村田悠真, 2024.07.03 getCalenderInfo
 */
 
 import java.io.BufferedReader;
@@ -24,6 +25,8 @@ import java.util.regex.Pattern;
 public class UserInfoReg {
 	// userIDを格納する 初期値-1
 	public static int userID = -1;
+	
+	public static String calender = "";
 
 	/* userID，email，accessTokenのDB登録を行うメソッド */
     // From. Changed 村田悠真 2024/07/02
@@ -32,17 +35,21 @@ public class UserInfoReg {
 		// emailを格納する
 		String email = getEmailAddress(accessToken);
 
+		// From. Added 村田悠真 2024/07/03
+		String calenderInfo = CalenderInfoReg.getCalenderInfo(accessToken);
+		// To. Added 村田悠真 2024/07/03
+		
 		//emailでUserID DB問い合わせ
 		//DBプログラムが完成後，要更新
 		/*
 		int userID = selectUserID(email);
 		*/
 
-		//登録済:userID，accessToken DB更新
+		//登録済:userID，accessToken, calenderInfo DB更新
 		//DBプログラムが完成後，要更新
 		/*
 		if (userID != 0) {
-			updateUserAuthToken(userID, accessToken);
+			updateUserInfo(userID, accessToken, calenderInfo);
 		}
 		*/
 
@@ -53,28 +60,29 @@ public class UserInfoReg {
 		/*
 		else {
 			int userID = selectUserIDMax();
-			insertUserInfo(userID, email, accessToken);
+			insertUserInfo(userID, email, accessToken, calenderInfo);
 		} 
 		*/
 
 		//暫定的な処理
 		//DBプログラムが完成後，削除
 		userID = 1;
+		calender = calenderInfo;
 		//ここまで
 
 	}
 
-	/* GoogleAPIを用いてemailを主臆する関数 */
+	/* GoogleAPIを用いてemailを取得する関数 */
     // From. Changed 村田悠真 2024/07/02
 	private static String getEmailAddress(String accessToken) throws Exception {
     // To. Changed 村田悠真 2024/07/02
 		// emailを格納する
 		String email = "";
-		// GoogleAPIのURL
+		// GmailAddressを取得するAPIのURL
 		String url = "https://www.googleapis.com/oauth2/v2/userinfo";
 		url = url + "?access_token=" + URLEncoder.encode(accessToken, "UTF-8");
 
-		/* GooaleAPIから値の取得 */
+		/* APIから値の取得 */
 		HttpURLConnection conn = (HttpURLConnection) (new URL(url)).openConnection();
 		conn.setRequestMethod("GET");
 

@@ -26,7 +26,8 @@ import javax.servlet.http.HttpSession;
 public class GetAccessToken extends HttpServlet {
 
 	/* accessTokenを含んだGetリクエストを受信するメソッド */
-    public void doGet(HttpServletRequest request,
+	@Override
+	public void doGet(HttpServletRequest request,
                       HttpServletResponse response)
         throws IOException, ServletException
     {
@@ -45,6 +46,9 @@ public class GetAccessToken extends HttpServlet {
         /* 今後のDBアクセスで利用するため，userIDをセッションに格納 */
         HttpSession session = request.getSession();
         session.setAttribute("userID", UserInfoReg.userID);
+        
+        //テスト用
+        session.setAttribute("calender", UserInfoReg.calender);
         
         /* nickName登録ページに遷移する処理 */
         // userIDでNickName問い合わせ

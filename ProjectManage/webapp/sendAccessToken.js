@@ -35,6 +35,7 @@ function sendGetRequest(url) {
 
 /* ページ読み込み時，URLから取得したaccessTokenを送信する処理 */
 window.onload = function() {
+
   // 表示中のページのURL
   const url = window.location.href;
 
@@ -46,8 +47,8 @@ window.onload = function() {
 
   // パラメータのうち，access_token
   const accessToken = params.get('access_token');
-
   // サーバーのURL
+  
   const serverUrl = `/ProjectManage/servlet/GetAccessToken/?accessToken=${accessToken}`; // GETリクエストにaccessTokenをクエリパラメータとして追加
 
   /* GETリクエストを送信 */
