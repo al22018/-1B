@@ -25,7 +25,8 @@ import javax.servlet.http.HttpSession;
 public class GetNickName extends HttpServlet {
 
 	/* nickNameを含んだGetリクエストを受信するメソッド */
-    public void doGet(HttpServletRequest request,
+    @Override
+	public void doGet(HttpServletRequest request,
                       HttpServletResponse response)
         throws IOException, ServletException
     {
@@ -47,9 +48,11 @@ public class GetNickName extends HttpServlet {
         
         // 暫定的な処理
         // ホーム画面完成後，要更新
+        String calender = (String)session.getAttribute("calender");
         String homeUrl = "/ProjectManage/homeLoginTest.html";
         homeUrl = homeUrl + "?userID=" + userID;
         homeUrl = homeUrl + "&nickName=" + URLEncoder.encode(nickName, "UTF-8");
+        homeUrl = homeUrl + "&calender=" + URLEncoder.encode(calender, "UTF-8");
         //ここまで
         
         response.sendRedirect(homeUrl);
