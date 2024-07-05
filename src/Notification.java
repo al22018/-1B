@@ -1,7 +1,7 @@
 
 /*************************************************
  * File Name			:Notification.java
- * Version				:Ver1.0
+ * Version				:Ver1.1
  * Designer				:荻野新
  * Date					:2024.06.16
  * Purpose				:通知関連の制御、情報の取得、通知の実行
@@ -36,6 +36,7 @@ public class Notification {
 	String weatherSentence = "";// メールで送る天気情報の文章
 
 	WeatherOfPrefecture weather;// 都道府県の天気情報を検索、保持するクラス
+	String leader = "";
 
 	// コンストラクタでprojectIDから企画情報とメール送信先を取得
 	Notification(int projectID) {
@@ -44,6 +45,10 @@ public class Notification {
 		project = pro.getProjectInfo(projectID);
 		UserInfo usr = new UserInfo();
 		to = usr.getEmails(projectID);
+		/*
+		 * 幹事の名前を取得を追加(ver1.1)
+		 */
+		leader = usr.getUserName(project.managerID);
 
 	}
 
@@ -60,7 +65,7 @@ public class Notification {
 		String minute = tmpTime.split(":")[1];
 		// メール末尾の注意書き
 		String note = "\n\n\n遊びの予定自動でたてるシステムより。\n※このメールは自動送信です。\n企画に関しての詳細のお問い合わせは幹事の"
-				+ project.leader + "にお問い合わせください。\nシステムに関するお問い合わせは09班までお問い合わせください。";
+				+ leader + "にお問い合わせください。\nシステムに関するお問い合わせは09班までお問い合わせください。";
 
 		subject = "遊び企画[" + project.projectName + "] の詳細";
 		text = "遊び企画[" + project.projectName + "]の目的地は" + project.destination + ", 日時は" + year + "年" + month + "月"
@@ -110,9 +115,10 @@ public class Notification {
 		String date = tmpDate.split("-")[2];
 		String hour = tmpTime.split(":")[0];
 		String minute = tmpTime.split(":")[1];
+		String managerName = 
 		// メール末尾の注意書き
 		String note = "\n\n\n遊びの予定自動でたてるシステムより。\n※このメールは自動送信です。\n企画に関しての詳細のお問い合わせは幹事の"
-				+ project.leader + "にお問い合わせください。\nシステムに関するお問い合わせは09班までお問い合わせください。";
+				+ leader + "にお問い合わせください。\nシステムに関するお問い合わせは09班までお問い合わせください。";
 
 		subject = "遊び企画[" + project.projectName + "] の予定が近くなってきました！！";
 		text = "遊び企画[" + project.projectName + "]の目的地は" + project.destination + ", 日時は" + year + "年" + month + "月"

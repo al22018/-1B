@@ -22,12 +22,12 @@ import org.jsoup.select.Elements;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class SearchEvents {
+public class SearchEvents {// ウォーカープラスのURLと地域、ジャンルとそれらのIDを保持するMapを宣言
     String url = "https://www.walkerplus.com/event_list/";
     Map<String, String> regionIDMap = new HashMap<>();
     Map<String, String> genreIDMap = new HashMap<>();
 
-    SearchEvents() {
+    SearchEvents() {// MapにIDを読み出す
         try (BufferedReader br = new BufferedReader(new FileReader("../datas/regionIDMap.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -53,6 +53,7 @@ public class SearchEvents {
 
     }
 
+    // Event型のArrayListを返すメソッド。引数は地域名とジャンル名、日にち
     ArrayList<Event> search(String region, String genre, String dateTime) {
         String month = dateTime.split("-")[1];
         if (genre.equals("花見") || genre.equals("紅葉")) {
@@ -112,7 +113,7 @@ public class SearchEvents {
         return events;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) {// テスト用mainメソッド
         SearchEvents sea = new SearchEvents();
         String region = "東京都";
         String genre = "花火";
