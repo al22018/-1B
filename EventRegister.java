@@ -2,6 +2,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.json.simple.JSONObject;
@@ -27,6 +28,7 @@ public class EventRegister {
 	public int sendData(JSONObject requestBody) {
 		int projectID=projectIDCounter.getAndIncrement();
 		managerName = (String) requestBody.get("managerName");
+		managerID = ((Number) requestBody.get("managerID")).intValue();
 		projectName = (String) requestBody.get("projectName");
 		category = (String) requestBody.get("category");
 		region = (String) requestBody.get("region");
@@ -38,7 +40,7 @@ public class EventRegister {
 		dateTime = Timestamp.valueOf(localDateTime);
 		String value = projectName + category + region + dateTime;
 		//データベースに保存
-		ProjectInfo project = new ProjectInfo();
+		/*ProjectInfo project = new ProjectInfo();
 		project.projectID = 1; // 例
 		project.projectName = projectName;
 		project.dateTime = dateTime; // タイムスタンプ
@@ -46,7 +48,7 @@ public class EventRegister {
 		project.destination = "目的地";
 		project.managerID = 123; // 例
 		project.region = region;
-		project.progressStatus = "Registration";
+		project.progressStatus = "Registration";*/
 		//project.setProjectInfo();//
 		JSONObject projectJson = new JSONObject();
 		projectJson.put("managerName",managerName);
@@ -56,10 +58,26 @@ public class EventRegister {
         projectJson.put("category", category);
         projectJson.put("region", region);
         projectJson.put("dateTime", dateTime.toString());
-        SimpleHttpServer.jsonDataList.add(projectJson);
+        MyServlet.jsonDataList.add(projectJson);
+        JoinRegister joinRegister = new JoinRegister();
+        joinRegister.sendData(projectID,managerName,managerID);
 		System.out.println("成功\n" + value);
 		return projectID;
 		
+	}
+	public void disposeData(JSONObject requestBody) {
+		int projectID = Integer.parseInt((String)requestBody.get("projectID"));
+		System.out.println("close:"+projectID);
+		synchronized (MyServlet.jsonDataList) {
+            Iterator<JSONObject> iterator = MyServlet.jsonDataList.iterator();
+            while (iterator.hasNext()) {
+                JSONObject data = iterator.next();
+                int id = ((Integer) data.get("projectID")).intValue();
+                if (id == projectID) {
+                    iterator.remove();
+                }
+            }
+        }
 	}
 	
 }
