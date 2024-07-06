@@ -13,7 +13,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ホーム画面</title>
     <style>
-        <!--スタイル-->
         body {
             font-family: "MS Gothic", sans-serif;
         }
@@ -49,7 +48,6 @@
             
             <label for="region">地域:</label>
             <select id="region" name="region">
-                <option value="">都道府県を選択</option>
                 <option value="北海道" data-pref-id="01">北海道</option>
                 <option value="青森県" data-pref-id="02">青森県</option>
                 <option value="岩手県" data-pref-id="03">岩手県</option>
@@ -171,8 +169,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             // 企画作成ボタンのクリックイベント
             document.getElementById('EventMainInput').addEventListener('click', function() {
-                const managerName = sessionStorage.getItem('managerName');
-                const managerID = sessionStorage.getItem('managerID');
+                const managerName = "新保";
+                const managerID = 1;
                 const projectName = document.getElementById('projectName').value;
                 const category = document.getElementById('category').value;
                 const region = document.getElementById('region').value;
