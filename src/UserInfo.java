@@ -1,3 +1,5 @@
+package src;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -27,11 +29,11 @@ public class UserInfo {
 	public String calendarInfo = "";
 	
 	//DB接続のためのアドレスなど
-	String server = "//172.18.80.1:5432/"; // seserverのIPアドレス
-    String dataBase = "test1";
-    String user = "oops";
-    String passWord = "pass";
-    String url = "jdbc:postgresql:" + server + dataBase;
+	String server = "//172.21.40.30:5432/"; 
+	String dataBase = "firstdb";
+	String user = "shibaura";
+	String passWord = "toyosu";
+	String url = "jdbc:postgresql:" + server + dataBase;
 
 	//企画IDから、参加者のメールアドレスを取得してtoリストに保存するメソッド
 	public ArrayList<String> getEmails(int projectID) {
@@ -85,12 +87,12 @@ public class UserInfo {
 	}
 	
 	//UserID、更新するフィールド、更新する値を渡すとテーブルを更新するメソッド
-	public void updateUserInfo(int userID, String updateField, String value) {
+	public void updateUserInfo(int userID, String updatefield, String value) {
         try {
             Class.forName("org.postgresql.Driver");
             Connection con = DriverManager.getConnection(url, user, passWord);
 
-            String sql = "UPDATE UsersTableNinth SET " + updateField + "=? WHERE UserID=" + userID;
+            String sql = "UPDATE UsersTableNinth SET " + updatefield + "=? WHERE UserID=" + userID;
             PreparedStatement prestmt = con.prepareStatement(sql);
 
             prestmt.setString(1, value);
@@ -101,28 +103,27 @@ public class UserInfo {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 	
 	//引数としてgetinfo(知りたいフィールド名), knowninfo(既知のフィールド名), knownvalue(既知のフィールドの値)を与えると、知りたいフィールドの値をString型で返すメソッド
 	//※注意　・引数はSQLのフィールド名を入力してください
 	//　　　　・UserIDもString型で返します
 	//　　　　・knowninfoは個人が特定できる情報にしてください(表示名などは重複可なのでNG)
-	public String getUserInfo(String getInfo, String knownField, String knownValue) {
+	public String getUserInfo(String getinfo, String knowninfo, String knownvalue) {
         try {
             Class.forName("org.postgresql.Driver");
             Connection con = DriverManager.getConnection(url, user, passWord);
 
-            String sql = "SELECT " + getInfo + " FROM UsersTableNinth WHERE " + knownField + "='" + knownValue + "'";
+            String sql = "SELECT " + getinfo + " FROM UsersTableNinth WHERE " + knowninfo + "='" + knownvalue + "'";
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
             
             rs.next();
             String result;
-            if(getInfo.equals("UserID")) {
-            	result = Integer.toString(rs.getInt(getInfo));
+            if(getinfo.equals("UserID")) {
+            	result = Integer.toString(rs.getInt(getinfo));
             }else {
-            	result = rs.getString(getInfo);
+            	result = rs.getString(getinfo);
             }
             
             stmt.close();
@@ -132,7 +133,28 @@ public class UserInfo {
             e.printStackTrace();
             return null;
         }
+    }
+	
+	//userIDの最大値をint型で返すメソッドです
+	public int getMaxID() {
+        try {
+            Class.forName("org.postgresql.Driver");
+            Connection con = DriverManager.getConnection(url, user, passWord);
 
+            String sql = "SELECT MAX(userID) FROM UsersTableNinth";
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            
+            rs.next();
+            int result = rs.getInt(1);
+         
+            stmt.close();
+            con.close();
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 }
 
