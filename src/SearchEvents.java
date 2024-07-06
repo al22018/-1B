@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class SearchEvents {// ウォーカープラスのURLと地域、ジャンルとそれらのIDを保持するMapを宣言
     String url = "https://www.walkerplus.com/event_list/";
     Map<String, String> regionIDMap = new HashMap<>();
-    Map<String, String> genreIDMap = new HashMap<>();
+    Map<String, String> categoryIDMap = new HashMap<>();
 
     SearchEvents() {// MapにIDを読み出す
         try (BufferedReader br = new BufferedReader(new FileReader("../datas/regionIDMap.txt"))) {
@@ -44,7 +44,7 @@ public class SearchEvents {// ウォーカープラスのURLと地域、ジャ�
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(" ");
                 if (parts.length == 2) {
-                    genreIDMap.put(parts[0], parts[1]);
+                    categoryIDMap.put(parts[0], parts[1]);
                 }
             }
         } catch (IOException e) {
@@ -54,21 +54,21 @@ public class SearchEvents {// ウォーカープラスのURLと地域、ジャ�
     }
 
     // Event型のArrayListを返すメソッド。引数は地域名とジャンル名、日にち
-    ArrayList<Event> search(String region, String genre, String dateTime) {
+    ArrayList<Event> search(String region, String category, String dateTime) {
         String month = dateTime.split("-")[1];
-        if (genre.equals("花見") || genre.equals("紅葉")) {
+        if (category.equals("花見") || category.equals("紅葉")) {
             month = "date" + month + "00";
         }
         String regionID = regionIDMap.get(region);
-        String genreID = genreIDMap.get(genre);
-        url += month + "/" + regionID + "/" + genreID;
-        if (genreID.contains("http")) {
-            if (genre.equals("花火")) {
-                url = genreID + month + "/" + regionID;
-            } else if (genre.equals("花見")) {
-                url = genreID + regionID + "/ss0008/" + month;
-            } else if (genre.equals("紅葉")) {
-                url = genreID + month + "/" + regionID;
+        String categoryID = categoryIDMap.get(category);
+        url += month + "/" + regionID + "/" + categoryID;
+        if (categoryID.contains("http")) {
+            if (category.equals("花火")) {
+                url = categoryID + month + "/" + regionID;
+            } else if (category.equals("花見")) {
+                url = categoryID + regionID + "/ss0008/" + month;
+            } else if (category.equals("紅葉")) {
+                url = categoryID + month + "/" + regionID;
             }
         }
         ArrayList<Event> events = new ArrayList<Event>();
@@ -92,7 +92,7 @@ public class SearchEvents {// ウォーカープラスのURLと地域、ジャ�
 
                 // JsonNodeから必要な情報を抽出
                 JsonNode eventNode;
-                for (int i = 0; i < rootNode.size(); i++) {
+                for (int i = 0; i < rootNode.size() || i < 5; i++) {
                     eventNode = rootNode.get(i);
                     if (eventNode != null) {
                         Event event = new Event();
@@ -115,9 +115,13 @@ public class SearchEvents {// ウォーカープラスのURLと地域、ジャ�
 
     public static void main(String[] args) {// テスト用mainメソッド
         SearchEvents sea = new SearchEvents();
-        String region = "東京都";
-        String genre = "花火";
-        ArrayList<Event> events = sea.search(region, genre);
+        // String region = "東京都";
+        // String category = "花火";
+        // String dateTime = "2024-10-02 00:00:00";
+        ProjectInfo pro = new ProjectInfo();
+        ProjectInfo testPro = pro.getProjectInfo(0);
+
+        ArrayList<Event> events = sea.search(testPro.region, testPro.category, testPro.dateTime.toString());
         if (events.isEmpty()) {
             System.out.println("イベントがありません");
         } else {

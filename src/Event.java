@@ -7,7 +7,7 @@
  * 
  */
 
-public class Event {
+ public class Event {
 	String name = "";
 	String startDate = "";
 	String endDate = "";

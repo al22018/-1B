@@ -10,9 +10,6 @@ import java.sql.Statement;
  * Designer		:相内 優真
  * Date			:2024.06.18
  * Purpose		:企画とユーザーの情報を扱うためのクラス
- * 
- *
- * 
  */
 
 public class UserAndProjectInfo {
