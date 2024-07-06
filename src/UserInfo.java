@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 /*
  * File Name	:UserInfo.java
@@ -60,6 +61,49 @@ public class UserInfo {
 		}catch(Exception e){
 			e.printStackTrace();
 			return to;
+		}
+	}
+	
+	//未投票のユーザと投票済みのユーザのリストのリストを返すメソッド
+	public List<List<String>> getVoterList(int projectID){
+		List<String> yet = new ArrayList<String>();
+        List<String> done = new ArrayList<String>();
+        
+        try {
+			Class.forName("org.postgresql.Driver");
+			Connection con = DriverManager.getConnection(url, user, passWord);
+	        Statement stmt = con.createStatement();
+	        
+	       
+	        String sql1 = "SELECT a.Displayname FROM UsersTableNinth a JOIN UserAndProjectsDetailsTableNinth b ON a.UserID = b.UserID WHERE b.genre IS NULL AND b.ProjectID = " + projectID;
+	        String sql2 = "SELECT a.Displayname FROM UsersTableNinth a JOIN UserAndProjectsDetailsTableNinth b ON a.UserID = b.UserID WHERE b.genre IS NOT NULL AND b.ProjectID = " + projectID;
+	        ResultSet rs1 = stmt.executeQuery(sql1);
+	        ResultSet rs2 = stmt.executeQuery(sql2);
+	        
+	        while(rs1.next() || rs2.next()) {
+	        	if(rs1.getString("Displayname") == null) {
+	        		yet.add("");
+	        	}else {
+	        		yet.add(rs1.getString("Displayname"));
+	        	}
+	        	if(rs2.getString("Displayname") == null) {
+	        		done.add("");
+	        	}else {
+	        		done.add(rs2.getString("Displayname"));
+	        	}
+			}
+	        
+	        List<List<String>> voterList = new ArrayList<>();
+	        voterList.add(yet);
+	        voterList.add(done);
+			
+			stmt.close();
+			con.close();
+			return voterList;
+		} catch (Exception e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+			return null;
 		}
 	}
 	
