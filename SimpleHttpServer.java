@@ -1,7 +1,13 @@
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -12,7 +18,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 public class SimpleHttpServer {
-	public static JSONObject jsonData = new JSONObject();
+	public static List<JSONObject> jsonDataList = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
         int port = 8000;
@@ -33,11 +39,17 @@ public class SimpleHttpServer {
                 handleOptions(exchange);
                 return;
             }
-
-            if (method.equalsIgnoreCase("POST")) {
-                handlePost(exchange);
-            } else if (method.equalsIgnoreCase("GET")) {
-                handleGet(exchange);
+            
+            switch (method) {
+                case "POST":
+                    handlePost(exchange);
+                    break;
+                case "GET":
+                    handleGet(exchange);
+                    break;
+                default:
+                    exchange.sendResponseHeaders(405, -1); // Method not allowed
+                    break;
             }
         }
 
@@ -51,54 +63,107 @@ public class SimpleHttpServer {
 
         private void handlePost(HttpExchange exchange) throws IOException {
             Headers headers = exchange.getRequestHeaders();
-            int contentLength = Integer.parseInt(headers.getFirst("Content-length"));
-            byte[] requestBodyBytes = new byte[contentLength];
-            exchange.getRequestBody().read(requestBodyBytes);
+            int contentLength = Integer.parseInt(headers.getFirst("Content-Length"));
+            StringBuilder requestBody = new StringBuilder(contentLength);
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    requestBody.append(line);
+                }
+            }
 
-            String requestBody = new String(requestBodyBytes);
-            System.out.println("Request Body: " + requestBody);
+            System.out.println("Request Body: " + requestBody.toString());
 
             try {
                 JSONParser parser = new JSONParser();
-                JSONObject requestData = (JSONObject) parser.parse(requestBody);
+                JSONObject requestData = (JSONObject) parser.parse(requestBody.toString());
                 String action = (String) requestData.get("action");
-               
+
                 JSONObject response = new JSONObject();
                 response.put("message", "POST received");
                 response.put("data", requestData);
-                
-                String jsonResponse = response.toJSONString();
-                exchange.getResponseHeaders().set("Content-Type", "application/json");
-                exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
-                exchange.sendResponseHeaders(200, jsonResponse.getBytes().length);
-                OutputStream os = exchange.getResponseBody();
-                os.write(jsonResponse.getBytes());
+
                 if ("event".equals(action)) {
                     EventRegister eventregister = new EventRegister();
-                    eventregister.sendData(requestData);
+                    int eventResponse = eventregister.sendData(requestData);
+                    response.put("projectID", eventResponse);
                 } else if ("join".equals(action)) {
                     JoinRegister joinregister = new JoinRegister();
                     joinregister.sendData(requestData);
                 }
-                os.close();
+
+                String jsonResponse = response.toJSONString();
+                exchange.getResponseHeaders().set("Content-Type", "application/json");
+                exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
+                
+                // 成功時のレスポンスコードをセット
+                exchange.sendResponseHeaders(200, jsonResponse.getBytes(StandardCharsets.UTF_8).length);
+                
+                try (OutputStream os = exchange.getResponseBody()) {
+                    os.write(jsonResponse.getBytes(StandardCharsets.UTF_8));
+                }
+
             } catch (ParseException e) {
                 e.printStackTrace();
                 exchange.sendResponseHeaders(400, 0); // Bad request
+            } catch (Exception e) {
+                e.printStackTrace();
+                exchange.sendResponseHeaders(500, 0); // Internal server error
+            }        
+            }
+
+        private void handleGet(HttpExchange exchange) throws IOException {
+            exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
+            System.out.println("OK");
+            JSONArray jsonArray = new JSONArray();
+            String query = exchange.getRequestURI().getQuery(); // Get query parameters from URI
+
+            if (query != null) {
+                // Split query parameters by '&'
+                String[] params = query.split("&");
+                int requestedProjectID = -1;
+                
+                // Search for 'projectID=' parameter
+                for (String param : params) {
+                    if (param.startsWith("projectID=")) {
+                        requestedProjectID = Integer.parseInt(param.substring("projectID=".length()));
+                        break;
+                    }
+                }
+                
+                // Process based on requestedProjectID
+                if (requestedProjectID != -1) {
+                    for (JSONObject data : jsonDataList) {
+                        int projectID = ((Long) data.get("projectID")).intValue(); // Cast to int from Long
+                        if (projectID == requestedProjectID) {
+                            jsonArray.add(data);
+                        }
+                    }
+                } else {
+                    // If no valid projectID parameter is provided, return all data
+                    for (JSONObject data : jsonDataList) {
+                        jsonArray.add(data);
+                    }
+                }
+            } else {
+                // If no query parameters are provided, return all data
+                for (JSONObject data : jsonDataList) {
+                    jsonArray.add(data);
+                }
+            }
+
+            // Prepare response
+            String jsonDataString = jsonArray.toJSONString();
+            System.out.println(jsonDataString);
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
+            exchange.sendResponseHeaders(200, jsonDataString.getBytes(StandardCharsets.UTF_8).length);
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(jsonDataString.getBytes(StandardCharsets.UTF_8));
             }
         }
 
-        private void handleGet(HttpExchange exchange) throws IOException {
-            // JSONデータを文字列に変換
-            // レスポンスを送信
-        	 String jsonDataString = jsonData.toJSONString();
-        	 System.out.println(jsonDataString);
-             exchange.getResponseHeaders().set("Content-Type", "application/json");
-             exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
-             exchange.sendResponseHeaders(200, jsonDataString.getBytes().length);
-             OutputStream os = exchange.getResponseBody();
-             os.write(jsonDataString.getBytes());
-             os.close();
-        }
+
+
     }
 }
 

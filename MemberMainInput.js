@@ -18,9 +18,13 @@
  */
 
 async function MemberMainInput(projectID) {
-    const url = 'http://localhost:8000'; // 送信先サーバのURL
+    const url = 'http://localhost:8080/LocalServer4/api/data'; // 送信先サーバのURL
+	const displayName='陽己';
+	const userID=2;
     const data = {
         action: 'join',
+        displayName: displayName,
+        userID: userID,
         projectID: projectID
     };
     try {
@@ -39,6 +43,9 @@ async function MemberMainInput(projectID) {
         }
 
         const result = await response.json();
+        sessionStorage.setItem('projectID', projectID);
+        sessionStorage.setItem('userID', userID);
+        window.location.href = 'JoinDisplay.html';
 
         // 正常終了
         return result.success ? 1 : 0;

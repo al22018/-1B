@@ -19,10 +19,14 @@
  * - Integer: 処理の成否 (0: エラー, それ以外: 正常)
  */
 
-async function EventMainInput(category, region, timeHour, timeMinute) {
-    const url = 'http://localhost:8000'; // 送信先サーバのURL
+async function EventMainInput(managerName,managerID,projectName,category, region, timeHour, timeMinute) {
+    const url = 'http://localhost:8080/LocalServer4/api/data'; // 送信先サーバのURL
+    //本来は引数から使う
     const data = {
         action: 'event',
+        managerName: managerName,
+        managerID: managerID,
+        projectName: projectName,
         category: category,
         region: region,
         timeHour: timeHour,
@@ -41,9 +45,15 @@ async function EventMainInput(category, region, timeHour, timeMinute) {
         if (!response.ok) {
             throw new Error('通信エラーが発生しました');
         }
-
+      	
         const result = await response.json();
-        window.location.href = 'JoinDisplay.html';
+        if (result.projectID) {
+            sessionStorage.setItem('projectID', result.projectID);
+            sessionStorage.setItem('userID', managerID);
+            window.location.href = 'JoinDisplay.html';
+        } else {
+            throw new Error('プロジェクトIDが取得できませんでした');
+        }
 
         // 正常終了
         return result.success ? 1 : 0;
@@ -52,7 +62,6 @@ async function EventMainInput(category, region, timeHour, timeMinute) {
 
         // エラーメッセージを表示し、W2ホーム画面に戻る処理
         alert('通信エラーが発生しました');
-        window.location.href = '/Home';
 
         return 0; // エラー
     }
