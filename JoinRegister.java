@@ -2,56 +2,52 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class JoinRegister {
-    String displayName = "新保";
-    int userID = 1;
-    public void sendData(JSONObject requestData) {
-        String string = (String) requestData.get("projectID");
-        if (string != null) {
-            int projectID = Integer.parseInt(string);
-            System.out.println(projectID);
+	public void sendData(int projectID, String displayName, int userID) {
 
-            ProjectInfo cons = new ProjectInfo();
-            ProjectInfo project = cons.getProjectInfo(projectID);
-            if("Registration".equals(project.progressStatus)) {
-                UserAndProjectInfo userproject = new UserAndProjectInfo;
-                useproject.userID=userID;
-                useproject.projectID=projectID;
-                setUserAndProjectInfo()
-            }
+		System.out.println(projectID);
 
-            for (JSONObject data : SimpleHttpServer.jsonDataList) {
-            	Number projectIDNumber = (Number) data.get("projectID");
-            	int existingProjectID = projectIDNumber.intValue();
-                if (existingProjectID == projectID) {
-                    // Add participants array if it does not exist
-                    if (!data.containsKey("participants")) {
-                        data.put("participants", new JSONArray());
-                    }
+		/*ProjectInfo cons = new ProjectInfo();
+		ProjectInfo project = cons.getProjectInfo(projectID);
+		if("Registration".equals(project.progressStatus)) {
+		    UserAndProjectInfo userproject = new UserAndProjectInfo;
+		    useproject.userID=userID;
+		    useproject.projectID=projectID;
+		    setUserAndProjectInfo()
+		}*/
 
-                    // Get the participants array
-                    JSONArray participantsArray = (JSONArray) data.get("participants");
+		for (JSONObject data : MyServlet.jsonDataList) {
+			Number existingprojectIDNumber = (Number) data.get("projectID");
+			int existingProjectID = existingprojectIDNumber.intValue();
+			if (existingProjectID == projectID) {
+				// Add participants array if it does not exist
+				if (!data.containsKey("participants")) {
+					data.put("participants", new JSONArray());
+				}
 
-                    // Check if the participant already exists
-                    boolean participantExists = false;
-                    for (Object obj : participantsArray) {
-                        JSONObject participant = (JSONObject) obj;
-                        if (participant.get("userID").equals(userID)) {
-                            participantExists = true;
-                            break;
-                        }
-                    }
+				// Get the participants array
+				JSONArray participantsArray = (JSONArray) data.get("participants");
 
-                    // Add the participant if they do not already exist
-                    if (!participantExists) {
-                        JSONObject participant = new JSONObject();
-                        participant.put("displayName", displayName);
-                        participant.put("userID", userID);
-                        participantsArray.add(participant);
-                    }
+				// Check if the participant already exists
+				boolean participantExists = false;
+				for (Object obj : participantsArray) {
+					JSONObject participant = (JSONObject) obj;
+					if ((Integer)participant.get("userID") == userID) {
+						participantExists = true;
+						break;
+					}
+				}
 
-                    break;
-                }
-            }
-        }
-    }
+				// Add the participant if they do not already exist
+				if (!participantExists) {
+					JSONObject participant = new JSONObject();
+					participant.put("displayName", displayName);
+					participant.put("userID", userID);
+					participantsArray.add(participant);
+				}
+
+				break;
+
+			}
+		}
+	}
 }
