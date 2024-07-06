@@ -20,10 +20,8 @@
  */
 
 async function EventMainInput(managerName,managerID,projectName,category, region, timeHour, timeMinute) {
-    const url = 'http://localhost:8000/api/data'; // 送信先サーバのURL
+    const url = 'http://localhost:8080/LocalServer4/api/data'; // 送信先サーバのURL
     //本来は引数から使う
-    managerName='新保';
-    managerID=1;
     const data = {
         action: 'event',
         managerName: managerName,
@@ -47,10 +45,11 @@ async function EventMainInput(managerName,managerID,projectName,category, region
         if (!response.ok) {
             throw new Error('通信エラーが発生しました');
         }
-
+      	
         const result = await response.json();
         if (result.projectID) {
             sessionStorage.setItem('projectID', result.projectID);
+            sessionStorage.setItem('userID', managerID);
             window.location.href = 'JoinDisplay.html';
         } else {
             throw new Error('プロジェクトIDが取得できませんでした');
@@ -63,7 +62,6 @@ async function EventMainInput(managerName,managerID,projectName,category, region
 
         // エラーメッセージを表示し、W2ホーム画面に戻る処理
         alert('通信エラーが発生しました');
-        window.location.href = '/Home';
 
         return 0; // エラー
     }
