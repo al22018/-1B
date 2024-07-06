@@ -10,9 +10,6 @@ import java.sql.Statement;
  * Designer		:相内 優真
  * Date			:2024.06.18
  * Purpose		:企画とユーザーの情報を扱うためのクラス
- * 
- *
- * 
  */
 
 public class UserAndProjectInfo {
@@ -23,7 +20,7 @@ public class UserAndProjectInfo {
     public String budget2 = "";
     public String review = "";
 
- // DB接続のためのアドレスなど
+    // DB接続のためのアドレスなど
     String server = "//172.18.80.1:5432/"; // seserverのIPアドレス
     String dataBase = "test1";
     String user = "oops";
@@ -35,14 +32,15 @@ public class UserAndProjectInfo {
 
         // DB接続
         try {
-        	UserAndProjectInfo ret = new UserAndProjectInfo();
+            UserAndProjectInfo ret = new UserAndProjectInfo();
 
             Class.forName("org.postgresql.Driver");
 
             Connection con = DriverManager.getConnection(url, user, passWord);
             Statement stmt = con.createStatement();
             // 検索の実施と結果の格納
-            String sql = "SELECT * FROM UserAndProjectsDetailsTableNinth WHERE ProjectID=" + projectID + " AND UserID=" + userID;
+            String sql = "SELECT * FROM UserAndProjectsDetailsTableNinth WHERE ProjectID=" + projectID + " AND UserID="
+                    + userID;
             ResultSet rs = stmt.executeQuery(sql);
             rs.next();
             ret.genre = rs.getString("Genre");
@@ -55,13 +53,13 @@ public class UserAndProjectInfo {
 
             return ret;
         } catch (Exception e) {
-        	UserAndProjectInfo ret = new UserAndProjectInfo();
+            UserAndProjectInfo ret = new UserAndProjectInfo();
             e.printStackTrace();
             return ret;
         }
     }
 
-   // useIDとprojectIDを紐づけてデータベースに保存するメソッド
+    // useIDとprojectIDを紐づけてデータベースに保存するメソッド
     public void setUserAndProjectInfo() {
         try {
             Class.forName("org.postgresql.Driver");
@@ -85,14 +83,15 @@ public class UserAndProjectInfo {
         }
 
     }
-    
-    //userIDとprojectIDから投票データを更新するメソッド
+
+    // userIDとprojectIDから投票データを更新するメソッド
     public void updateVoteInfo(int userID, int projectID) {
         try {
             Class.forName("org.postgresql.Driver");
             Connection con = DriverManager.getConnection(url, user, passWord);
 
-            String sql = "UPDATE UserAndProjectsDetailsTableNinth SET Genre=?, Budget1=?, Budget2=?, review=? WHERE UserID=" + userID + " AND projectID=" + projectID;
+            String sql = "UPDATE UserAndProjectsDetailsTableNinth SET Genre=?, Budget1=?, Budget2=?, review=? WHERE UserID="
+                    + userID + " AND projectID=" + projectID;
             PreparedStatement prestmt = con.prepareStatement(sql);
 
             prestmt.setString(1, genre);

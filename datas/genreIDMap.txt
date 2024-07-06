@@ -1,0 +1,13 @@
+スポーツ eg0108
+グルメ eg0117
+フリーマーケット eg0115
+お祭り eg0055
+ライブ,音楽イベント eg0109
+舞台,演劇 eg0111
+展示会 eg0126
+花火 https://hanabi.walkerplus.com/list/
+花見 https://hanami.walkerplus.com/ranking/
+紅葉 https://koyo.walkerplus.com/list/
+プール sg0111
+アニメ,ゲーム eg0127
+物産展,観光フェア eg0118
