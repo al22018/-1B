@@ -41,14 +41,19 @@ public class JoinRegister {
 				if (!participantExists) {
 					ProjectInfo cons = new ProjectInfo();
 					ProjectInfo project = cons.getProjectInfo(projectID);
-					if ("Registration".equals(project.progressStatus)) {
+					
 
 						JSONObject participant = new JSONObject();
 						participant.put("displayName", displayName);
 						participant.put("userID", userID);
 						participantsArray.add(participant);
-					}
+						UserAndProjectInfo userproject = new UserAndProjectInfo();
+						userproject.userID = userID;
+						userproject.projectID = projectID;
+						userproject.setUserAndProjectInfo();
+					
 				}
+				break;
 			}
 		}
 	}
