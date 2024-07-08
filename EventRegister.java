@@ -40,16 +40,15 @@ public class EventRegister {
 		dateTime = Timestamp.valueOf(localDateTime);
 		String value = projectName + category + region + dateTime;
 		//データベースに保存
-		/*ProjectInfo project = new ProjectInfo();
-		project.projectID = 1; // 例
+		ProjectInfo project = new ProjectInfo();
+		project.projectID = projectID; // 例
 		project.projectName = projectName;
 		project.dateTime = dateTime; // タイムスタンプ
 		project.category = category;
-		project.destination = "目的地";
-		project.managerID = 123; // 例
+		project.managerID = managerID; // 例
 		project.region = region;
-		project.progressStatus = "Registration";*/
-		//project.setProjectInfo();//
+		project.progressStatus = "Registration";
+		project.setProjectInfo();
 		JSONObject projectJson = new JSONObject();
 		projectJson.put("managerName",managerName);
 		projectJson.put("managerID",managerID);
