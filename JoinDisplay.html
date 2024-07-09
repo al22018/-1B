@@ -1,214 +1,248 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ユーザ情報表示</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .section {
-            margin-bottom: 20px;
-        }
-        .section h2 {
-            font-size: 24px;
-            color: #333;
-            border-bottom: 2px solid #ccc;
-            padding-bottom: 5px;
-        }
-        .item {
-            margin-bottom: 10px;
-        }
-        .item label {
-            font-weight: bold;
-        }
-        .user-list {
-            margin-top: 10px;
-            padding: 0;
-            list-style-type: none;
-        }
-        .user-list li {
-            margin-bottom: 5px;
-        }
-        .user-details {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .button-container {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .button-container button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #007BFF;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-        }
-    </style>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>ユーザ情報表示</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f0f0f0;
+			padding: 20px;
+			display: flex;
+			justify-content: center;
+			align-items: flex-start;
+			height: 100vh;
+		}
+
+		.container {
+			width: 100%;
+			max-width: 800px;
+			background-color: #fff;
+			padding: 20px;
+			border-radius: 8px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			display: flex;
+			flex-direction: column;
+		}
+
+		.section {
+			margin-bottom: 20px;
+			border-bottom: 2px solid #ccc;
+			padding-bottom: 10px;
+		}
+
+		.section:last-child {
+			border-bottom: none;
+			margin-bottom: 0;
+		}
+
+		.section h2 {
+			font-size: 24px;
+			color: #333;
+			margin-top: 0;
+			margin-bottom: 10px;
+		}
+
+		.item {
+			margin-bottom: 15px;
+			display: flex;
+			align-items: center;
+		}
+
+		.item label {
+			font-weight: bold;
+			min-width: 120px;
+			margin-right: 10px;
+		}
+
+		.item span {
+			flex: 1;
+		}
+
+		.user-list {
+			padding: 0;
+			list-style-type: none;
+			margin-top: 10px;
+			flex: 1;
+			margin-left: 20px;
+		}
+
+		.user-list li {
+			margin-bottom: 5px;
+		}
+
+		.button-container {
+			text-align: center;
+			margin-top: 20px;
+		}
+
+		.button-container button {
+			padding: 10px 20px;
+			font-size: 16px;
+			cursor: pointer;
+			background-color: #000;
+			color: #fff;
+			border: none;
+			border-radius: 4px;
+			margin: 0 10px;
+		}
+	</style>
 </head>
+
 <body>
-    <div class="container">
-        <div class="section">
-            <h2>ユーザ情報</h2>
-            <div class="item">
-                <label for="projectName">企画名:</label>
-                <span id="projectName"></span>
-            </div>
-            <div class="item">
-                <label for="projectID">企画ID:</label>
-                <span id="projectID"></span>
-            </div>
-            <div class="item">
-                <label for="category">カテゴリ:</label>
-                <span id="category"></span>
-            </div>
-            <div class="item">
-                <label for="region">地域:</label>
-                <span id="region"></span>
-            </div>
-            <div class="item">
-                <label for="dateTime">企画開始時間:</label>
-                <span id="dateTime"></span>
-            </div>
-            <div class="item">
-                <label for="managerID">幹事ID:</label>
-                <span id="managerID"></span>
-            </div>
-            <div class="item">
-                <label for="managerName">幹事の名前:</label>
-                <span id="managerName"></span>
-            </div>
-        </div>
-        <div class="section">
-            <h2>参加者情報</h2>
-            <ul id="participants" class="user-list">
-                <!-- 参加者の情報がここに動的に追加されます -->
-            </ul>
-        </div>
-        <div class="button-container">
-            <button id="closeButton">締め切り</button>
-            <button id="disposeButton">企画破棄</button>
-        </div>
-    </div>
+	<div class="container">
+		<div class="section">
+			<h2>ユーザ情報</h2>
+			<div class="item">
+				<label for="projectID">企画ID:</label>
+				<span id="projectID"></span>
+			</div>
+			<div class="item">
+				<label for="projectName">企画名:</label>
+				<span id="projectName"></span>
+			</div>
 
-    <script>
-        // ユーザ情報を更新する関数
-        function updateUserData() {
-    const projectID = sessionStorage.getItem('projectID');
-    const userID = sessionStorage.getItem('userID');
-    console.log('Retrieved projectID:', projectID);
-    const url = `http://localhost:8080/LocalServer4/api/data?projectID=${projectID}`;
-    
-    fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok')
-            }
-            return response.json(); // サーバーからのJSONデータを取得する
-        })
-        .then(dataList => {
-            console.log('Received data list:', dataList);
-            	if(dataList.length==0){
-				alert("企画が破棄されました");
-            	window.location.href = 'Home.html';
-            	}
-            // dataList の各要素に対して処理を行う
-            dataList.forEach(data => {
-                console.log('Processing data:', data);
-                let dateTime = new Date(data.dateTime);
-                let hours = dateTime.getHours();
-                let minutes = dateTime.getMinutes();
+			<div class="item">
+				<label for="category">カテゴリ:</label>
+				<span id="category"></span>
+			</div>
+			<div class="item">
+				<label for="region">地域:</label>
+				<span id="region"></span>
+			</div>
+			<div class="item">
+				<label for="dateTime">企画開始時間:</label>
+				<span id="dateTime"></span>
+			</div>
+			<div class="item">
+				<label for="managerID">幹事ID:</label>
+				<span id="managerID"></span>
+			</div>
+			<div class="item">
+				<label for="managerName">幹事の名前:</label>
+				<span id="managerName"></span>
+			</div>
+		</div>
+		<div class="section">
+			<h2>参加者情報</h2>
+			<ul id="participants" class="user-list">
+				<!-- 参加者の情報がここに動的に追加されます -->
+			</ul>
+		</div>
+		<div class="button-container">
+			<button id="closeButton">参加締め切り</button>
+			<button id="disposeButton">企画破棄</button>
+		</div>
+	</div>
 
-                document.getElementById('projectName').textContent = data.projectName;
-                document.getElementById('category').textContent = data.category;
-                document.getElementById('region').textContent = data.region;
-                document.getElementById('dateTime').textContent = hours + ":" + minutes;
-                document.getElementById('projectID').textContent = data.projectID;
-                document.getElementById('managerID').textContent = data.managerID;
-                document.getElementById('managerName').textContent = data.managerName;
-                document.getElementById('participants').textContent = data.participants;
-				if (userID==data.managerID) {
-    				document.getElementById('closeButton').style.display = 'block';
-    				document.getElementById('disposeButton').style.display = 'block';
-				} else {
-    				document.getElementById('closeButton').style.display = 'none';
-    				document.getElementById('disposeButton').style.display = 'none';
-				}
-                // 参加者のリストをクリア
-                const participantsList = document.getElementById('participants');
-                participantsList.innerHTML = '';
+	<script>
+		// ユーザ情報を更新する関数
+		function updateUserData() {
+			const projectID = sessionStorage.getItem('projectID');
+			const userID = sessionStorage.getItem('userID');
+			console.log('Retrieved projectID:', projectID);
+			const url = `http://localhost:8080/LocalServer6/api/data?projectID=${projectID}`;
 
-                // 参加者の情報をリストに追加
-				if (data.participants && Array.isArray(data.participants)) {
-                data.participants.forEach(participant => {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = `Name: ${participant.displayName}, ID: ${participant.userID}`;
-                    participantsList.appendChild(listItem);
-                });
-            }
-            });
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-            // エラー処理を行う場合のコード
-        });
-}
-        
-        // ページ読み込み時に実行
-        document.addEventListener('DOMContentLoaded', updateUserData);
-        
-        // 一定間隔でデータを更新する（例: 5秒ごと）
-        setInterval(updateUserData, 5000); // 5000ミリ秒（＝5秒）
-        
-        // 締め切りボタンをクリックしたときの処理
-        document.getElementById('closeButton').addEventListener('click', function() {
-            window.location.href = 'Home.html';
-            });
-        document.getElementById('disposeButton').addEventListener('click', function() {
-            const projectID = sessionStorage.getItem('projectID');
-            const url = `http://localhost:8080/LocalServer4/api/data`;
-            requestData={
-        action: 'dispose',
-        projectID: projectID
-    };
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestData)
-                
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                alert('企画が正常に破棄されました。');
-                window.location.href = 'Home.html';
-            })
-            .catch(error => {
-                console.error('Error disposing project:', error);
-                alert('企画の破棄中にエラーが発生しました。');
-            });
-        });
-    </script>
+			fetch(url)
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('Network response was not ok');
+					}
+					return response.json(); // サーバーからのJSONデータを取得する
+				})
+				.then(dataList => {
+					console.log('Received data list:', dataList);
+					if (dataList.length === 0) {
+						alert("企画がありません");
+						window.location.href = 'Home.html';
+					}
+
+					// dataList の各要素に対して処理を行う
+					dataList.forEach(data => {
+						console.log('Processing data:', data);
+						let dateTime = new Date(data.dateTime);
+						let hours = dateTime.getHours();
+						let minutes = dateTime.getMinutes();
+
+						document.getElementById('projectName').textContent = data.projectName;
+						document.getElementById('category').textContent = data.category;
+						document.getElementById('region').textContent = data.region;
+						document.getElementById('dateTime').textContent = hours + ":" + (minutes < 10 ? '0' : '') + minutes;
+						document.getElementById('projectID').textContent = data.projectID;
+						document.getElementById('managerID').textContent = data.managerID;
+						document.getElementById('managerName').textContent = data.managerName;
+
+						if (userID == data.managerID) {
+							document.getElementById('closeButton').style.display = 'inline-block';
+							document.getElementById('disposeButton').style.display = 'inline-block';
+						} else {
+							document.getElementById('closeButton').style.display = 'none';
+							document.getElementById('disposeButton').style.display = 'none';
+						}
+
+						// 参加者のリストをクリア
+						const participantsList = document.getElementById('participants');
+						participantsList.innerHTML = '';
+
+						// 参加者の情報をリストに追加
+						if (data.participants && Array.isArray(data.participants)) {
+							data.participants.forEach(participant => {
+								const listItem = document.createElement('li');
+								listItem.textContent = `Name: ${participant.displayName}, ID: ${participant.userID}`;
+								participantsList.appendChild(listItem);
+							});
+						}
+					});
+				})
+				.catch(error => {
+					console.error('Error fetching data:', error);
+				});
+		}
+
+		// ページ読み込み時に実行
+		document.addEventListener('DOMContentLoaded', updateUserData);
+
+		// 一定間隔でデータを更新する（例: 5秒ごと）
+		setInterval(updateUserData, 5000); // 5000ミリ秒（＝5秒）
+
+		// 締め切りボタンをクリックしたときの処理
+		document.getElementById('closeButton').addEventListener('click', function () {
+			window.location.href = 'Home.html';
+		});
+
+		// 企画破棄ボタンをクリックしたときの処理
+		document.getElementById('disposeButton').addEventListener('click', function () {
+			const projectID = sessionStorage.getItem('projectID');
+			const url = `http://localhost:8080/LocalServer6/api/data`;
+			const requestData = {
+				action: 'dispose',
+				projectID: projectID
+			};
+			fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(requestData)
+			})
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('Network response was not ok');
+					}
+					return response.json();
+				})
+				.then(data => {
+					alert('企画が正常に破棄されました。');
+					window.location.href = 'Home.html';
+				})
+				.catch(error => {
+					console.error('Error disposing project:', error);
+					alert('企画の破棄中にエラーが発生しました。');
+				});
+		});
+	</script>
 </body>
+
 </html>
