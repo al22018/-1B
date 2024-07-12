@@ -144,9 +144,8 @@
 
 				<label for="category">カテゴリ:</label>
 				<select id="category" name="category">
-					<option value="食べる">食べる</option>
-					<option value="遊ぶ">遊ぶ</option>
-					<option value="観る・学ぶ">観る・学ぶ</option>
+					<option value="event">event</option>
+					<option value="facility">facility</option>
 				</select>
 
 				<label for="region">地域:</label>
@@ -200,16 +199,6 @@
 					<option value="沖縄県" data-pref-id="47">沖縄県</option>
 				</select>
 
-				<label for="time-hour">時間帯:</label>
-				<div class="time-select">
-					<select id="time-hour" name="time-hour">
-						<!-- JavaScript will populate this -->
-					</select>
-					<span>:</span>
-					<select id="time-minute" name="time-minute">
-						<!-- JavaScript will populate this -->
-					</select>
-				</div>
 				<button id="EventMainInput">企画作成</button>
 			</div>
 
@@ -229,27 +218,6 @@
 		</div>
 	</div>
 
-	<script>
-		//時間帯についての選択表示
-		// Populate hour and minute dropdowns
-		const hourSelect = document.getElementById('time-hour');
-		const minuteSelect = document.getElementById('time-minute');
-
-		for (let hour = 0; hour < 24; hour++) {
-			const formattedHour = String(hour).padStart(2, '0');
-			const hourOption = document.createElement('option');
-			hourOption.value = formattedHour;
-			hourOption.textContent = formattedHour;
-			hourSelect.appendChild(hourOption);
-		}
-		for (let minute = 0; minute < 60; minute++) {
-			const formattedMinute = String(minute).padStart(2, '0');
-			const minuteOption = document.createElement('option');
-			minuteOption.value = formattedMinute;
-			minuteOption.textContent = formattedMinute;
-			minuteSelect.appendChild(minuteOption);
-		}
-	</script>
 
 	<!--呼び出す関数-->
 	<script src="EventMainInput.js"></script>
@@ -259,13 +227,13 @@
 		document.addEventListener('DOMContentLoaded', function () {
 			// 企画作成ボタンのクリックイベント
 			document.getElementById('EventMainInput').addEventListener('click', function () {
-				const managerName = "新保";
-				const managerID = 1;
+				const managerName = sessionStorage.getItem('displayName');
+				const managerID = parseInt(sessionStorage.getItem('userID'));
 				const projectName = document.getElementById('projectName').value;
 				const category = document.getElementById('category').value;
 				const region = document.getElementById('region').value;
-				const time_hour = document.getElementById('time-hour').value;
-				const time_minute = document.getElementById('time-minute').value;
+				const time_hour = '0';
+				const time_minute = '0';
 				EventMainInput(managerName, managerID, projectName, category, region, time_hour, time_minute);
 			});
 
@@ -281,7 +249,7 @@
 			fetch('http://localhost:8080/LocalServer6/api/data') // リクエストURLを適宜修正する
 				.then(response => response.json())
 				.then(data => {
-					const userID = 1; // 参照するuserIDを設定
+					const userID = sessionStorage.getItem('userID'); // 参照するuserIDを設定
 
 					// userIDが一致する参加者情報を表示する
 					const projectList = document.getElementById('projectList');
@@ -291,7 +259,7 @@
 								if (participant.userID === userID) {
 									// 参加者情報がある場合、企画情報をリストに追加
 									const listItem = document.createElement('li');
-									listItem.textContent = `企画ID: ${item.projectID}, 企画名: ${item.projectName}, カテゴリ: ${item.category}`;
+									listItem.textContent = `企画ID: ${item.projectID}, 企画名: ${item.projectName}, カテゴリ: ${item.category}, 地域: ${item.region}`;
 									const moveButton = document.createElement('button');
 									moveButton.textContent = '移動';
 									moveButton.addEventListener('click', function () {

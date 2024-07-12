@@ -18,44 +18,48 @@
  */
 
 async function MemberMainInput(projectID) {
-    const url = 'http://localhost:8080/LocalServer4/api/data'; // 送信先サーバのURL
-	const displayName='陽己';
-	const userID=2;
-    const data = {
-        action: 'join',
-        displayName: displayName,
-        userID: userID,
-        projectID: projectID
-    };
-    try {
-        // サーバにデータを送信
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
+	const url = 'http://localhost:8080/LocalServer6/api/data'; // 送信先サーバのURL
+	const displayName = sessionStorage.getItem('displayName');
+	const userID = parseInt(sessionStorage.getItem('userID'));
+	const data = {
+		action: 'join',
+		displayName: displayName,
+		userID: userID,
+		projectID: projectID
+	};
+	try {
+		// サーバにデータを送信
+		const response = await fetch(url, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data)
+		});
 
-        // レスポンスの確認
-        if (!response.ok) {
-            throw new Error('通信エラーが発生しました');
-        }
+		// レスポンスの確認
+		if (!response.ok) {
+			throw new Error('通信エラーが発生しました');
+		}
 
-        const result = await response.json();
-        sessionStorage.setItem('projectID', projectID);
-        sessionStorage.setItem('userID', userID);
-        window.location.href = 'JoinDisplay.html';
+		const result = await response.json()
+		if (result.progressstatus == 'Registration') {
+			sessionStorage.setItem('projectID', projectID);
+			sessionStorage.setItem('userID', userID);
+			window.location.href = 'JoinDisplay.html';
+		}else{
+			throw new Error('企画に参加できませんでした');
+		}
 
-        // 正常終了
-        return result.success ? 1 : 0;
-    } catch (error) {
-        c.error('通信エラー:', error);
+		// 正常終了
+		return result.success ? 1 : 0;
+	} catch (error) {
+		c.error('通信エラー:', error);
 
-        // エラーメッセージを表示し、W2ホーム画面に戻る処理
-        alert('通信エラーが発生しました');
-        window.location.href = '/Home';
+		// エラーメッセージを表示し、W2ホーム画面に戻る処理
+		alert('通信エラーが発生しました');
+		window.location.href = '/Home';
 
-        return 0; // エラー
-    }
+		return 0; // エラー
+	}
 }

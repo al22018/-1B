@@ -113,10 +113,6 @@
 				<span id="region"></span>
 			</div>
 			<div class="item">
-				<label for="dateTime">企画開始時間:</label>
-				<span id="dateTime"></span>
-			</div>
-			<div class="item">
 				<label for="managerID">幹事ID:</label>
 				<span id="managerID"></span>
 			</div>
@@ -134,6 +130,7 @@
 		<div class="button-container">
 			<button id="closeButton">参加締め切り</button>
 			<button id="disposeButton">企画破棄</button>
+			<button id="declineButton">参加辞退</button>
 		</div>
 	</div>
 
@@ -169,7 +166,6 @@
 						document.getElementById('projectName').textContent = data.projectName;
 						document.getElementById('category').textContent = data.category;
 						document.getElementById('region').textContent = data.region;
-						document.getElementById('dateTime').textContent = hours + ":" + (minutes < 10 ? '0' : '') + minutes;
 						document.getElementById('projectID').textContent = data.projectID;
 						document.getElementById('managerID').textContent = data.managerID;
 						document.getElementById('managerName').textContent = data.managerName;
@@ -177,9 +173,11 @@
 						if (userID == data.managerID) {
 							document.getElementById('closeButton').style.display = 'inline-block';
 							document.getElementById('disposeButton').style.display = 'inline-block';
+							document.getElementById('declineButton').style.display = 'none';
 						} else {
 							document.getElementById('closeButton').style.display = 'none';
 							document.getElementById('disposeButton').style.display = 'none';
+							document.getElementById('declineButton').style.display = 'inline-block';
 						}
 
 						// 参加者のリストをクリア
@@ -190,7 +188,7 @@
 						if (data.participants && Array.isArray(data.participants)) {
 							data.participants.forEach(participant => {
 								const listItem = document.createElement('li');
-								listItem.textContent = `Name: ${participant.displayName}, ID: ${participant.userID}`;
+								listItem.textContent = `名前: ${participant.displayName}, ID: ${participant.userID}`;
 								participantsList.appendChild(listItem);
 							});
 						}
@@ -240,6 +238,39 @@
 				.catch(error => {
 					console.error('Error disposing project:', error);
 					alert('企画の破棄中にエラーが発生しました。');
+				});
+		});
+		document.getElementById('declineButton').addEventListener('click', function () {
+			const projectID = sessionStorage.getItem('projectID');
+			const userID = sessionStorage.getItem('userID');
+			console.log("decline:" + projectID + "," + userID);
+			const url = `http://localhost:8080/LocalServer6/api/data`;
+			const requestData = {
+				action: 'decline',
+				projectID: projectID,
+				userID: userID
+			};
+			fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(requestData)
+			})
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('Network response was not ok');
+					}
+					
+					return response.json();
+				})
+				.then(data => {
+					alert('参加を辞退しました。');
+					window.location.href = 'Home.html';
+				})
+				.catch(error => {
+					console.error('Error declining project:', error);
+					alert('参加の辞退中にエラーが発生しました。');
 				});
 		});
 	</script>

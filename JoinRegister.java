@@ -1,19 +1,12 @@
+import java.util.Iterator;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class JoinRegister {
-	public void sendData(int projectID, String displayName, int userID) {
-
+	public String sendData(int projectID, String displayName, int userID) {
+		String string = "";
 		System.out.println(projectID);
-
-		/*ProjectInfo cons = new ProjectInfo();
-		ProjectInfo project = cons.getProjectInfo(projectID);
-		if("Registration".equals(project.progressStatus)) {
-		    UserAndProjectInfo userproject = new UserAndProjectInfo;
-		    useproject.userID=userID;
-		    useproject.projectID=projectID;
-		    setUserAndProjectInfo();
-		}*/
 
 		for (JSONObject data : MyServlet.jsonDataList) {
 			Number existingprojectIDNumber = (Number) data.get("projectID");
@@ -41,20 +34,47 @@ public class JoinRegister {
 				if (!participantExists) {
 					ProjectInfo cons = new ProjectInfo();
 					ProjectInfo project = cons.getProjectInfo(projectID);
-					
+					string = project.progressstatus;
+					JSONObject participant = new JSONObject();
+					participant.put("displayName", displayName);
+					participant.put("userID", userID);
+					participantsArray.add(participant);
 
-						JSONObject participant = new JSONObject();
-						participant.put("displayName", displayName);
-						participant.put("userID", userID);
-						participantsArray.add(participant);
-						UserAndProjectInfo userproject = new UserAndProjectInfo();
-						userproject.userID = userID;
-						userproject.projectID = projectID;
-						userproject.setUserAndProjectInfo();
-					
+					UserAndProjectInfo userproject = new UserAndProjectInfo();
+					userproject.userID = userID;
+					userproject.projectID = projectID;
+					userproject.setUserAndProjectInfo();
+
 				}
 				break;
 			}
 		}
+		return string;
+	}
+	public void disposeData(JSONObject requestBody) {
+		int projectID = ((Number) requestBody.get("projectID")).intValue();
+		int userID = ((Number) requestBody.get("userID")).intValue();
+		 // jsonDataListからprojectIDを持つJSONObjectを検索
+        for (JSONObject data : (Iterable<JSONObject>) MyServlet.jsonDataList) {
+            Number existingProjectIDNumber = (Number) data.get("projectID");
+            int existingProjectID = existingProjectIDNumber.intValue();
+            if (existingProjectID == projectID) {
+                // participants配列からuserIDを持つ要素を検索
+                JSONArray participantsArray = (JSONArray) data.get("participants");
+                if (participantsArray != null) {
+                    Iterator<JSONObject> iterator = participantsArray.iterator();
+                    while (iterator.hasNext()) {
+                        JSONObject participant = (JSONObject) iterator.next();
+                        if (((Number) participant.get("userID")).intValue() == userID) {
+                            // userIDを持つ要素を削除
+                            iterator.remove();
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
+        }
+        
 	}
 }

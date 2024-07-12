@@ -47,7 +47,7 @@ public class EventRegister {
 		project.category = category;
 		project.managerID = managerID; // 例
 		project.region = region;
-		project.progressStatus = "Registration";
+		project.progressstatus = "Registration";
 		project.setProjectInfo();
 		JSONObject projectJson = new JSONObject();
 		projectJson.put("managerName",managerName);
@@ -56,6 +56,7 @@ public class EventRegister {
         projectJson.put("projectName", projectName);
         projectJson.put("category", category);
         projectJson.put("region", region);
+        projectJson.put("progressstatus", "Registration");
         projectJson.put("dateTime", dateTime.toString());
         MyServlet.jsonDataList.add(projectJson);
         JoinRegister joinRegister = new JoinRegister();
@@ -67,6 +68,8 @@ public class EventRegister {
 	public void disposeData(JSONObject requestBody) {
 		int projectID = Integer.parseInt((String)requestBody.get("projectID"));
 		System.out.println("close:"+projectID);
+		ProjectInfo projectinfo = new ProjectInfo();
+		projectinfo.deleteProjectInfo(projectID);
 		synchronized (MyServlet.jsonDataList) {
             Iterator<JSONObject> iterator = MyServlet.jsonDataList.iterator();
             while (iterator.hasNext()) {

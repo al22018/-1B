@@ -20,7 +20,7 @@
  */
 
 async function EventMainInput(managerName,managerID,projectName,category, region, timeHour, timeMinute) {
-    const url = 'http://localhost:8080/LocalServer4/api/data'; // 送信先サーバのURL
+    const url = 'http://localhost:8080/LocalServer6/api/data'; // 送信先サーバのURL
     //本来は引数から使う
     const data = {
         action: 'event',

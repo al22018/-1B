@@ -6,16 +6,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 @WebServlet("/api/data")
 public class MyServlet extends HttpServlet {
@@ -57,10 +57,14 @@ public class MyServlet extends HttpServlet {
                 jsonResponse.put("projectID", eventResponse);
             } else if ("join".equals(action)) {
                 JoinRegister joinRegister = new JoinRegister();
-                joinRegister.sendData(Integer.parseInt((String) requestData.get("projectID")),(String) requestData.get("displayName"),2);
+                String status = joinRegister.sendData(Integer.parseInt((String) requestData.get("projectID")),(String) requestData.get("displayName"),2);
+                jsonResponse.put("progressstatus", status);
             } else if("dispose".equals(action)) {
                 EventRegister eventRegister = new EventRegister();
                 eventRegister.disposeData(requestData);
+            } else if("decline".equals(action)) {
+                JoinRegister joinRegister = new JoinRegister();
+                joinRegister.disposeData(requestData);
             }
 
             String jsonResponseString = jsonResponse.toJSONString();
@@ -87,8 +91,9 @@ public class MyServlet extends HttpServlet {
 
         try {
             String projectIDParam = request.getParameter("projectID");
+            String userIDParam = request.getParameter("userID");
 
-            if (projectIDParam != null) {
+            if (projectIDParam != null && userIDParam==null) {
                 int requestedProjectID = Integer.parseInt(projectIDParam);
 
                 // Search for matching projectID in jsonDataList
@@ -103,6 +108,20 @@ public class MyServlet extends HttpServlet {
                 for (JSONObject data : jsonDataList) {
                     jsonArray.add(data);
                 }
+            }
+            if(projectIDParam != null && userIDParam != null) {
+            	int projectID = Integer.parseInt(projectIDParam);
+            	int userID = Integer.parseInt(userIDParam);
+            	JSONObject data = new JSONObject();
+            	ProjectInfo cons = new ProjectInfo();
+            	ProjectInfo project = cons.getProjectInfo(projectID);
+            	UserAndProjectInfo userandprojectinfo =new UserAndProjectInfo();
+            	UserAndProjectInfo user = userandprojectinfo.getVoteInfo(projectID,userID);
+            	String progressstatus = project.progressstatus;
+            	String genre = user.genre;
+            	data.put("progressstatus",progressstatus);
+            	data.put("genre",genre);
+            	jsonArray.add(genre);
             }
 
             // Prepare response
@@ -127,4 +146,3 @@ public class MyServlet extends HttpServlet {
     }
 
 }
-
